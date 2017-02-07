@@ -242,7 +242,26 @@ readDeviceInfo()
 
 kbInputDevFd = None
 
-if ('max77803-muic' in devices or
+# TM1
+if 'Z3' in cpuinfo:
+    debug("detacted TM1, this is ad-hoc")
+    hwKeyDevice = {
+        "HOME": "sci-keypad",
+        "POWER": "sci-keypad",
+        "BACK": "sec_touchkey",
+        "MENU": "sec_touchkey",
+        "VOLUMEUP": "sprd-eic-keys",
+        "VOLUMEDOWN": "sprd-eic-keys"
+        }    
+    _inputKeyNameToCode["HOME"] = 139
+    _inputKeyNameToCode["POWER"] = 116
+    _inputKeyNameToCode["BACK"] = 158
+    _inputKeyNameToCode["MENU"] = 169
+    _inputKeyNameToCode["VOLUMEUP"] = 114
+    _inputKeyNameToCode["VOLUMEDOWN"] = 115
+    if iAmRoot:
+        touch_device = openTouchDevice(_opt_touch, "name:sec_touchscreen")
+elif ('max77803-muic' in devices or
     'max77804k-muic' in devices):
     debug("detected max77803-muic or max77804k-muic")
     hwKeyDevice = {
@@ -751,35 +770,11 @@ def takeScreenshotOnX():
     return True, compressed_image
 
 def westonTakeScreenshotRoot(retry=2):
-    if westonTakeScreenshotRoot.ssFilenames == None:
-        westonTakeScreenshotRoot.ssFilenames = findWestonScreenshotFilenames()
-    if not westonTakeScreenshotRoot.ssFilenames:
-        return False, "cannot find weston screenshot directory"
     try:
-        for ssFilename in westonTakeScreenshotRoot.ssFilenames:
-            if os.access(ssFilename, os.R_OK):
-                os.remove(ssFilename)
-        keyboard_device.press("KEY_LEFTMETA")
-        keyboard_device.tap("s")
-        keyboard_device.release("KEY_LEFTMETA")
+        result = os.system("XDG_RUNTIME_DIR=/run screenshooter-efl-util-32bit-armv7l -p /tmp/screenshot.png -w 360 -h 640")
+        if result != 0:
+            return False, "Failed to execute screenshooter"
         time.sleep(0.5)
-        # find which screenshot file got created?
-        for ssFilename in westonTakeScreenshotRoot.ssFilenames:
-            if os.access(ssFilename, os.R_OK):
-                break
-        else:
-            if retry > 0:
-                return westonTakeScreenshotRoot(retry-1)
-            else:
-                return False, "weston did not create any of files %s" % (
-                    westonTakeScreenshotRoot.ssFilenames,)
-        # wait for the screenshot writer to finish
-        writerPid = fuser(ssFilename)
-        if writerPid != None:
-            time.sleep(0.1)
-            while fuser(ssFilename, [writerPid]) != None:
-                time.sleep(0.1)
-        shutil.move(ssFilename, "/tmp/screenshot.png")
         os.chmod("/tmp/screenshot.png", 0666)
     except Exception, e:
         return False, str(e)

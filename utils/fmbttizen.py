@@ -506,7 +506,21 @@ class Device(fmbtgti.GUITestInterface):
         If you wish to receive exitstatus or standard output and error
         separated from shellCommand, refer to shellSOE().
         """
-        return _run(["sdb", "shell", shellCommand], expectedExitStatus=range(256))[1]
+       	return _run(["sdb", "shell", shellCommand], expectedExitStatus=range(256))[1]
+    def getRootPermission(self, isRoot):
+        """
+        Execute root command.
+
+        Parameters:
+
+          isRoot (bool)
+                 If isRoot is True, change target's permission to root.
+
+        """
+        if isRoot:
+       	    return _run(["sdb", "root", "on"], expectedExitStatus=range(256))[1]
+        else:
+            return _run(["sdb", "root", "off"], expectedExitStatus=range(256))[1]
 
     def shellSOE(self, shellCommand, username="", password="", asyncStatus=None, asyncOut=None, asyncError=None, usePty=False):
         """
@@ -628,11 +642,19 @@ class TizenDeviceConnection(fmbtgti.GUITestConnection):
             "fmbttizen-agent.py")
         remoteUploadPath = "/tmp"
         agentRemoteFilename = remoteUploadPath + "/fmbttizen-agent.py"
+
+        screenshotFilename = os.path.join(
+            os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))),
+            "screenshooter-efl-util-32bit-armv7l")
+        screenshotRemoteUploadPath = "/usr/bin"
+        screenshotRemoteFilename = screenshotRemoteUploadPath + "/screenshooter-efl-util-32bit-armv7l"
+
         uploadFiles = [(agentFilename,
                         agentRemoteFilename),
                        (os.path.join(os.path.dirname(agentFilename),
                                      "fmbtuinput.py"),
-                        remoteUploadPath + "/fmbtuinput.py")]
+                        remoteUploadPath + "/fmbtuinput.py"),
+                       (screenshotFilename, screenshotRemoteFilename)]
 
         # Upload fmbttizen-agent to the device
         if self._useSdb:
