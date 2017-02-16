@@ -19,7 +19,6 @@ ar-lib
 *.log
 *.debhelper
 *.substvars
-*.html
 *.stderr
 *.stdout
 *.stderr
