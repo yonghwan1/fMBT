@@ -11,7 +11,7 @@ with open('HISTORY.rst') as history_file:
 
 requirements = [
     # Package requirements here
-    "Jinja2==2.9.5"
+    "Jinja2==2.7.2"
 ]
 
 test_requirements = [
