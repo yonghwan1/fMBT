@@ -269,7 +269,7 @@ class _HtmlTestResult(_TextTestResult):
                     try:
                         messages[i] = messages[i].split()[0]
                         if messages[i] != '':
-                            destfile = self.copyFile(messages[i], testRunner)
+                            destfile = self.copyResultImage(messages[i], test_description, testRunner)
                             if destfile != "":
                                 expectedResult = destfile
                             else:
@@ -280,7 +280,7 @@ class _HtmlTestResult(_TextTestResult):
                     try:
                         messages[i] = messages[i].split()[0]
                         if messages[i] != '':
-                            destfile = self.copyFile(messages[i], testRunner)
+                            destfile = self.copyResultImage(messages[i], test_description, testRunner)
                             if destfile != "":
                                 actualResult = destfile
                             else:
@@ -291,6 +291,20 @@ class _HtmlTestResult(_TextTestResult):
             pass
 
         return test_cases_list.append([desc, status, error_type, error_message, expectedResult, actualResult])
+
+    def copyResultImage(self, sourcefile, testName, testRunner):
+        destFileRelativePath = os.path.join(testName, self.get_filename(sourcefile));
+        destfile = os.path.join(testRunner.output, destFileRelativePath)
+        resultDir = os.path.join(testRunner.output, testName);
+
+        if not os.path.exists(os.path.join(testRunner.output, testName)):
+            os.mkdir(resultDir)
+
+        try:
+            shutil.copy(sourcefile, destfile)
+        except Exception:
+            return ""
+        return destFileRelativePath;
 
     def copyFile(self, sourcefile, testRunner):
         destfile = os.path.join(testRunner.output, self.get_filename(sourcefile))
