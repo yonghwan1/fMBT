@@ -261,6 +261,25 @@ if 'Z3' in cpuinfo:
     _inputKeyNameToCode["VOLUMEDOWN"] = 115
     if iAmRoot:
         touch_device = openTouchDevice(_opt_touch, "name:sec_touchscreen")
+elif 'WC1-S' in cpuinfo:
+    debug("detacted TW1, this is ad-hoc")
+    hwKeyDevice = {
+       "HOME": "gpio-keys"
+       # ,"POWER": "sci-keypad",
+       #  "BACK": "gpio-keys",
+       # "MENU": "sec_touchkey",
+       #  "VOLUMEUP": "tizen_detent",
+       #  "VOLUMEDOWN": "tizen_detent"
+        }
+    _inputKeyNameToCode["HOME"] = 116
+    # _inputKeyNameToCode["POWER"] = 116
+    # _inputKeyNameToCode["BACK"] = 116
+    # _inputKeyNameToCode["MENU"] = 169
+    # _inputKeyNameToCode["VOLUMEUP"] = 5
+    # _inputKeyNameToCode["VOLUMEDOWN"] = 7
+    if iAmRoot:
+        touch_device = openTouchDevice(_opt_touch, "name:sec_touchscreen")
+
 elif ('max77803-muic' in devices or
     'max77804k-muic' in devices):
     debug("detected max77803-muic or max77804k-muic")
@@ -771,7 +790,16 @@ def takeScreenshotOnX():
 
 def westonTakeScreenshotRoot(retry=2):
     try:
-        result = os.system("XDG_RUNTIME_DIR=/run screenshooter-efl-util-32bit-armv7l -p /tmp/screenshot.png -w 360 -h 640")
+        result = 1
+        # tm1
+        if 'Z3' in cpuinfo:
+            result = os.system(
+                "XDG_RUNTIME_DIR=/run screenshooter-efl-util-32bit-armv7l -p /tmp/screenshot.png -w 360 -h 640")
+        # tw1
+        if 'WC1-S' in cpuinfo:
+            result = os.system(
+                "XDG_RUNTIME_DIR=/run screenshooter-efl-util-32bit-armv7l -p /tmp/screenshot.png -w 360 -h 360")
+
         if result != 0:
             return False, "Failed to execute screenshooter"
         time.sleep(0.5)
