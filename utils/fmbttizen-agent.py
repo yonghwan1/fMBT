@@ -282,14 +282,14 @@ elif 'WC1-S' in cpuinfo:
 elif 'SOLIS-LTE' in cpuinfo:
     debug("detacted TW2, this is ad-hoc")
     hwKeyDevice = {
-        "HOME": "s2mpw01-power-keys",
+        # "HOME": "s2mpw01-power-keys",
         "POWER": "s2mpw01-power-keys",
-        "BACK": "gpio-keys"
+        "BACK": "gpio_keys"
 #        ,"MENU": "sec_touchkey",
 #         "VOLUMEUP": "tizen_detent",
 #         "VOLUMEDOWN": "tizen_detent"
         }
-    _inputKeyNameToCode["HOME"] = 139
+    # _inputKeyNameToCode["HOME"] = 139
     _inputKeyNameToCode["POWER"] = 116
     _inputKeyNameToCode["BACK"] = 158
 #    _inputKeyNameToCode["MENU"] = 169
