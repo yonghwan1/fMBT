@@ -297,7 +297,12 @@ elif 'SOLIS-LTE' in cpuinfo:
 #     _inputKeyNameToCode["VOLUMEDOWN"] = 7
     if iAmRoot:
         touch_device = openTouchDevice(_opt_touch, "name:sec_touchscreen")
-
+# odroid ux3
+elif 'SAMSUNG EXYNOS (Flattened Device Tree)' in cpuinfo:
+    debug("detacted odroid ux3")
+    if iAmRoot:
+        mouse_device = openMouseDevice(_opt_mouse, None)
+        keyboard_device = openKeyboardDevice(_opt_keyboard)
 elif ('max77803-muic' in devices or
     'max77804k-muic' in devices):
     debug("detected max77803-muic or max77804k-muic")
